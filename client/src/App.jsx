@@ -48,7 +48,7 @@ function App() {
 
   async function deleteItem(id) {
     try {
-      const response = await fetch(`http://localhost:3000/api/todos2/${id}`, {
+      const response = await fetch(`http://localhost:3000/api/todos/${id}`, {
         method: "DELETE",
       });
 
@@ -60,6 +60,23 @@ function App() {
       }
     } catch (error) {
       console.error("Error deleting todo:", error);
+    }
+  }
+
+  async function updateItem(id) {
+    try {
+      const response = await fetch(`http://localhost:3000/api/todos/${id}`, {
+        method: "EDIT",
+      });
+
+      if (response.ok) {
+        // Update the item from the local state (todos)
+        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+      } else {
+        console.error("Failed to update this todo item");
+      }
+    } catch (error) {
+      console.error("There is an error updating this item:", error);
     }
   }
 

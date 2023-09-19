@@ -26,12 +26,24 @@ app.get("/api/todos", async (req, res) => {
     }
 })
 
+app.put("/api/todos", async (req, res) => {
+    const todoId  = req.params.id;
+
+    try {    
+        await sql`UPDATE FROM todos WHERE id = ${todoId}`;
+        res.status(204).send();
+    } catch (error) {
+        console.error("Yet to be updated:", error)
+        res.status(500).json({error: "Error"})
+    }
+});
+
 app.delete("/api/todos/:id", async (req, res) => {
     const todoId = req.params.id;
 
     try {
       await sql`DELETE FROM todos WHERE id = ${todoId}`;
-      res.status(204).send(); // No content response for successful deletion
+      res.status(204).send("Sucessfully deleted "); // No content response for successful deletion
     } catch (error) {
       console.error("Error deleting todo:", error);
       res.status(500).json({ error: "Internal server error" });
