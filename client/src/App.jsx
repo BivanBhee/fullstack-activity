@@ -6,6 +6,8 @@ function App() {
 
   const [todos, setTodos] = useState([]);
   const [taskInputValue, setTaskInputValue] = useState("");
+  const [edittingTaskId, setEdittingTaskId] = useState(null);
+  const [edittingTask, setEdittingTask] = useState({});
 
   useEffect(() => {
     async function fetchTodos() {
@@ -63,21 +65,7 @@ function App() {
     }
   }
 
-  const [editTaskId, setEditTaskId] = useState(null);
-  const [editedTaskText, setEditedTaskText] = useState("");
-
-
-function startEdit(id, taskText) {
-    setEditTaskId(id);
-    setEditedTaskText(taskText);
-  }
-
-function cancelEdit() {
-    setEditTaskId(null);
-    setEditedTaskText("");
-  }
-
-  async function saveEdit(id) {
+  async function handleEdit(id) {
     try {
       const response = await fetch(`http:/localhost:3000/api/todos/${id}`, {
         method: "PUT", 
@@ -86,8 +74,8 @@ function cancelEdit() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          task: editedTaskText,
-          is_completed: false,    // You can set this based on your logic
+          task: edittingTask.task,
+          is_completed: edittingTask.is_completed,    
         }),
       });
 
@@ -95,7 +83,7 @@ function cancelEdit() {
         // Update the task in the local state (todos)
         setTodos((prevTodos) =>
           prevTodos.map((todo) =>
-            todo.id === id ? { ...todo, task: editedTaskText } : todo
+            todo.id === id ? { ...todo, task: edittingTask } : todo
           )
         );
 
@@ -144,7 +132,7 @@ function cancelEdit() {
             <span className="flex-1">{todo.task}</span>
             <button
             type="submit"
-            onClick={() => startEdit(id)}
+            onClick={() => startEdit(todo.id)}
             className="text-purple-500 hover:text-purple-800 border pt-1 pb-1 pr-2 pl-2 rounded-md bg-slate-300 mr-5"
             >
               Edit
