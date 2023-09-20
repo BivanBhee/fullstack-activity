@@ -63,20 +63,49 @@ function App() {
     }
   }
 
-  async function updateItem(id) {
+  const [editTaskId, setEditTaskId] = useState(null);
+  const [editedTaskText, setEditedTaskText] = useState("");
+
+
+function startEdit(id, taskText) {
+    setEditTaskId(id);
+    setEditedTaskText(taskText);
+  }
+
+function cancelEdit() {
+    setEditTaskId(null);
+    setEditedTaskText("");
+  }
+
+  async function saveEdit(id) {
     try {
-      const response = await fetch(`http://localhost:3000/api/todos/${id}`, {
-        method: "EDIT",
+      const response = await fetch(`http:/localhost:3000/api/todos/${id}`, {
+        method: "PUT", 
+        // The PUT method helps to edit a task
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          task: editedTaskText,
+          is_completed: false,    // You can set this based on your logic
+        }),
       });
 
       if (response.ok) {
-        // Update the item from the local state (todos)
-        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+        // Update the task in the local state (todos)
+        setTodos((prevTodos) =>
+          prevTodos.map((todo) =>
+            todo.id === id ? { ...todo, task: editedTaskText } : todo
+          )
+        );
+
+        // Reset edit state
+        cancelEdit();
       } else {
-        console.error("Failed to update this todo item");
+        console.error("Failed to update todo");
       }
     } catch (error) {
-      console.error("There is an error updating this item:", error);
+      console.error("Error updating todo:", error);
     }
   }
 
@@ -113,6 +142,13 @@ function App() {
               className="ml-1 form-checkbox h-3 w-3 text-purple-500"
             />
             <span className="flex-1">{todo.task}</span>
+            <button
+            type="submit"
+            onClick={() => startEdit(id)}
+            className="text-purple-500 hover:text-purple-800 border pt-1 pb-1 pr-2 pl-2 rounded-md bg-slate-300 mr-5"
+            >
+              Edit
+            </button>
             <button
               type="button"
               onClick={() => deleteItem(todo.id)}

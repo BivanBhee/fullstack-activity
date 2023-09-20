@@ -26,17 +26,29 @@ app.get("/api/todos", async (req, res) => {
     }
 })
 
-app.put("/api/todos", async (req, res) => {
-    const todoId  = req.params.id;
-
-    try {    
-        await sql`UPDATE FROM todos WHERE id = ${todoId}`;
-        res.status(204).send();
-    } catch (error) {
-        console.error("Yet to be updated:", error)
-        res.status(500).json({error: "Error"})
-    }
-});
+// app.put("/api/todos/:id", async (req, res) => {
+//     const { id } = req.params;
+//     const { task, is_completed } = req.body;
+  
+//     try {
+//       const updatedTodo = await sql
+//         UPDATE todos
+//         SET task = ${task}, is_completed = ${is_completed}
+//         WHERE id = ${id}
+//         RETURNING *
+//       ;
+  
+//       if (updatedTodo && updatedTodo.length > 0) {
+//         res.status(200).json(updatedTodo[0]);
+//       } else {
+//         res.status(404).send("Todo not found");
+//       }
+//     } catch (error) {
+//       console.error("Error updating todo:", error);
+//       res.status(500).send("Internal server error");
+//     }
+//   });
+    
 
 app.delete("/api/todos/:id", async (req, res) => {
     const todoId = req.params.id;
